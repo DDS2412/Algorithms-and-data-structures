@@ -1,4 +1,4 @@
 *.txt
-run.bat
+*.bat
 bin/*
 src/mooc/*
