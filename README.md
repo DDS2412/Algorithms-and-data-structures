@@ -1,1 +1,3 @@
-# Algorithms-and-data-structures
+# Algorithms and datastructures
+## Лабораторные работы по
+## алгоритмам и структурам данных
