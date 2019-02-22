@@ -1,0 +1,4 @@
+*.txt
+run.bat
+bin/*
+src/mooc/*
