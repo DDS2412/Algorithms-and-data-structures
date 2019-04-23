@@ -1,7 +1,8 @@
 package week5; 
 
 import mooc.*;
-
+import week2.EdxIO; 
+  
 public class task1 { 
     static int[] arr;
     static int n;
