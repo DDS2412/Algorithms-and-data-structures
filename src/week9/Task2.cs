@@ -4,60 +4,66 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Week9
 {
     class Task2
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             using (StreamWriter sw = new StreamWriter("output.txt"))
             {
-                string text =  File.ReadAllText("input.txt").Replace(" ", string.Empty);
-
-                if(text.Length < 3)
+                string[] stdin = File.ReadAllLines("input.txt");
+                foreach (var line in stdin)
                 {
-                    sw.WriteLine("0");
-                }
-                else
-                {
-                    var rightDictionary = text
-                        .GroupBy(s => s)
-                        .ToDictionary(s => s.Key, s => new Symbol(0, s.Count()));
-
-                    var leftDictionary = new Dictionary<char, Symbol>();
-
-                    long totalCount = 0;
-                    for(int i = 0; i < text.Length; i++)
+                    var text = Regex.Replace(line, @"\s", string.Empty);
+                    if (text.Length < 3)
                     {
-                        char curSymbol = text[i];
-                        Symbol symbol = rightDictionary[curSymbol];
-                        symbol.rightEntry--;
-
-                        foreach(var entry in leftDictionary)
-                        {
-                            totalCount += entry.Value.NumbersPalindromes;
-                        }
-                        symbol.leftEntry++;
-                        leftDictionary[curSymbol] = symbol;
+                        sw.WriteLine("0");
+                        continue;
                     }
 
-                    sw.WriteLine(totalCount);
+                    var right = text.GroupBy(c => c).ToDictionary(g => g.Key, g => new S(0, g.Count()));
+                    var left = new Dictionary<char, S>();
+
+                    var cc = text[0];
+                    var entry = right[cc];
+                    left[cc] = entry;
+                    entry.left++;
+                    entry.right--;
+
+                    var count = text.Length - 1;
+                    ulong s = 0;
+                    for (int i = 1; i < count; i++)
+                    {
+                        cc = text[i];
+                        entry = right[cc];
+                        entry.right--;
+
+                        foreach (var kv in left)
+                            s += kv.Value.Muls;
+
+                        entry.left++;
+                        left[cc] = entry;
+                    }
+
+                    sw.WriteLine(s);
                 }
             }
         }
 
-        private class Symbol
+        class S
         {
-            public long leftEntry, rightEntry;
+            public int left, right;
 
-            public Symbol(long leftEntry, long rightEntry)
+            public ulong Muls { get => (ulong)this.left * (ulong)this.right; }
+
+            public S(int left, int right)
             {
-                this.leftEntry = leftEntry;
-                this.rightEntry = rightEntry;
+                this.left = left;
+                this.right = right;
             }
-
-            public long NumbersPalindromes { get => this.leftEntry * this.rightEntry;  }
         }
     }
 }
